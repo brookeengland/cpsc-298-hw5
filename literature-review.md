@@ -30,3 +30,18 @@ Gender gap through time and space: A journey through Wikipedia biographies via t
 - This article proposes the Wikidata Human Gender Indicator (WHGI), a tool for measuring gender representation in Wikipedia biographies over time, cultures, and languages. It uses data from Wikidata to analyze how gender bias appears in those who are considered "notable" and how these patterns relate to broader issues of gender inequality and human development.
 
 ## Democracy in Wikipedia
+1. Konieczny, P. (2009). Governance, Organization, and Democracy on the Internet: The Iron Law and the Evolution of Wikipedia. *Sociological Forum, 24*(1), 162–192. https://doi.org/10.1111/j.1573-7861.2008.01090.x  
+
+This study examines whether the Iron Law of Oligarchy exists in Wikipedia by analyzing how a key policy of the website regarding verifiability evolved into its current form. 
+
+2. Klemp, N. J., & Forcehimes, A. T. (2010). From Town-Halls to Wikis: Exploring Wikipedia’s Implications for Deliberative Democracy. *Journal of Public Deliberation, 6*(2), Article 7. https://delibdemjournal.org/article/id/380/  
+
+This essay examines the implications Wikipedia holds for theories of deliberative democracy. 
+
+3. Shaw, A., & Hill, B. M. (2014). Laboratories of Oligarchy? How the Iron Law Extends to Peer Production. *Journal of Communication, 64*(2), 215–238. https://doi.org/10.1111/jcom.12082  
+
+This study examines how WIkipedia has inspired voluntary associations, collectives & social movemnts to embrace open collaboration as a model of democratic organization. However, many peer prodiction projects such as Wikipedia, might exhibit deep inequalities, suggesting that they may not fufill democratic ideals. 
+
+4. Shi, F., Teplitskiy, M., Duede, E., & Evans, J. A. (2019). The Wisdom of Polarized Crowds. *Nature Human Behaviour, 3*(4), 329–336. https://doi.org/10.1038/s41562-019-0541-6
+
+This study explores the effects of ideological composition on team performance by analysing millions of edits to Wikipedia’s political, social issues and science articles. 
