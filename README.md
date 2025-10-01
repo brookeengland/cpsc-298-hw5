@@ -13,6 +13,12 @@ Our research also explores how Wikipedia reflects democratic practices. Research
 
 See local file for detailed discussion of research articles, including citations with links to Google Scholar and PDFs
 
+## Research Questions
+1. How can we detect and measure biased language in Wikipedia articles at the sentence level?
+2. How does Wikipedia bias change over time through the revision process?
+3. To what extent do Wikipedia Talk pages function as democratic spaces of deliberation?
+4. How do patterns of participation influence consensus-building?
+
 ## Methodology
 **1. Bias Detection**
 - Build upon Hube (2017) and related studies by applying bias lexicon and machine learning models (e.g. Random Forest) to identify biased statements at the sentence level
