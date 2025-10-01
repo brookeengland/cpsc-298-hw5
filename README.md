@@ -18,6 +18,7 @@ See local file for detailed discussion of research articles, including citations
 2. How does Wikipedia bias change over time through the revision process?
 3. To what extent do Wikipedia Talk pages function as democratic spaces of deliberation?
 4. How do patterns of participation influence consensus-building?
+5. Does democratic participation reduce bias, or do small groups of dominant editors shape outcomes that increase bias?
 
 ## Methodology
 **1. Bias Detection**
