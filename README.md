@@ -9,6 +9,7 @@ or increases bias compared to traditional encyclopedias. Building upon prior res
 are the various sources of bias and how we can identify bias at the sentence level and build models to detect biased language.
 
 Our research also explores how Wikipedia reflects democratic practices. Research shows that while it promotes collaboration, small groups of editors often dominate governance (Konieczny, 2009; Shaw & Hill, 2014). Wikipedia’s Talk pages function as deliberative spaces, and politically diverse contributors can improve content quality (Klemp & Forcehimes, 2010; Shi et al., 2019). This project analyzes Wikipedia data to assess neutrality in discussions, examine consensus-building, study governance of contentious topics, and evaluate participation patterns. Wikipedia thus offers insight into both the possibilities and limitations of democracy in online collaborative knowledge production.
+
 ## [Literature Review](literature-review.md)
 
 See local file for detailed discussion of research articles, including citations with links to Google Scholar and PDFs
@@ -40,4 +41,45 @@ _The chart above showcases the analysis on the United States Talk Page_
 
 <img width="1354" height="479" alt="Screenshot 2025-09-30 at 9 41 51 AM" src="https://github.com/user-attachments/assets/b4325c14-71e1-48f7-94a0-0a47d2714060" />
 
-  
+```python
+toxicity_conf_dist = Counter(toxicity_confidences)
+
+# Median confidence
+score_to_num = {"Low": 1, "Medium": 2, "High": 3}
+num_to_score = {1: "Low", 2: "Medium", 3: "High"}
+median_sentiment_conf = num_to_score[int(np.median([score_to_num[c] for c in sentiment_confidences]))]
+median_toxicity_conf = num_to_score[int(np.median([score_to_num[c] for c in toxicity_confidences]))]
+
+print("\n=== Aggregated Results ===")
+print(f"Median Sentiment Confidence → {median_sentiment_conf}")
+print(f"Median Toxicity Confidence  → {median_toxicity_conf}\n")
+
+print("Sentiment Label Distribution:")
+for k in ["Positive", "Neutral", "Negative"]:
+    print(f"  {k}: {sentiment_label_dist.get(k,0)}")
+
+print("\nSentiment Confidence Distribution:")
+for k in ["Low", "Medium", "High"]:
+    print(f"  {k}: {sentiment_conf_dist.get(k,0)}")
+
+print("\nToxicity Confidence Distribution:")
+for k in ["Low", "Medium", "High"]:
+    print(f"  {k}: {toxicity_conf_dist.get(k,0)}")
+
+# Visualization
+fig, axs = plt.subplots(1, 3, figsize=(18,5))
+
+axs[0].bar(sentiment_label_dist.keys(), sentiment_label_dist.values(), color='skyblue')
+axs[0].set_title("Sentiment Label Distribution")
+axs[0].set_ylabel("Number of Comments")
+
+axs[1].bar(sentiment_conf_dist.keys(), sentiment_conf_dist.values(), color='lightgreen')
+axs[1].set_title("Sentiment Confidence Distribution")
+axs[1].set_ylabel("Number of Comments")
+
+axs[2].bar(toxicity_conf_dist.keys(), toxicity_conf_dist.values(), color='salmon')
+axs[2].set_title("Toxicity Confidence Distribution")
+axs[2].set_ylabel("Number of Comments")
+
+plt.show()
+```
