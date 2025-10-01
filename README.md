@@ -32,7 +32,7 @@ See local file for detailed discussion of research articles, including citations
 - Compare article-level bias with Talk page governance structures to investigate connections between inclusiveness in discussions and neutrality in content
 - Assess whether diverse, democratic participation reduces bias, or whether small, dominant groups shape articles that enable bias.
 
-## WikiPedia API Prototype
+## Wikipedia API Prototype
 
 The program fetches the content of a Wikipedia talk page (e.g., “Talk:Climate Change”) using the Wikipedia API, extracts individual editor comments, and analyzes them with two machine learning models: a sentiment analysis model (classifying comments as Positive, Neutral, or Negative) and a toxicity detection model. It handles long comments by chunking, classifies each comment with a confidence level (Low, Medium, High), and aggregates the results to provide distributions and median confidence scores. The program can also visualize these results, giving an overview of the tone, neutrality, and potential bias in the conversation.
 
