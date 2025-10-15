@@ -199,6 +199,18 @@ plt.show()
 ```
 
 # Research Question Week 7
-Question: How does higher toxicity correlate with stronger negative sentiment in Wikipedia Talk-page discussions?
+**Question:** How does the overall tone (sentiment and toxicity) of a Wikipedia Talk page vary across different topics?
+
+### Methodology
+
+1. Fetch Talk-page text 
+3. Extract editor comments
+4. Analyze tone of each comment
+5. Aggregate per Talk page
+   - Percentages of positive/neutral/negative comments
+   - Percentages of low/medium/high toxicity levels
+   - Median confidence scores for both sentiment and toxicity
+7. Compare across topics
+8. Internpret results
 
 
