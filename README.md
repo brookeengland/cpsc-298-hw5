@@ -205,12 +205,190 @@ plt.show()
 
 1. Fetch Talk-page text 
 3. Extract editor comments
-4. Analyze tone of each comment
+4. Analyze the tone of each comment
 5. Aggregate per Talk page
    - Percentages of positive/neutral/negative comments
    - Percentages of low/medium/high toxicity levels
    - Median confidence scores for both sentiment and toxicity
+
 7. Compare across topics
-8. Internpret results
+8. Interpret results
+
+### Wikipedia API Prototype (UPDATED!)
+The program still contains the same functionalities from last week, now with the ability to compare several topics, rather than observing the data for just one. Now, the program will ask the user for the number of topics they'd like to compare, and request that each title be input. The program will output 4 graphs: sentiment per comment (positive, neutral, or negative), sentiment confidence (model certainty), toxicity per comment (low, medium, or high), and a stacked bar graph, showing what proportion of comments are positive, neutral, and negative.
+
+_The example below showcases a comparison between the talk pages for Elon Musk, the United States & Civil Rights Movement._
+
+<img width="1510" height="596" alt="Screenshot 2025-10-14 at 11 25 55 PM" src="https://github.com/user-attachments/assets/c2fba47f-c4e6-4ff3-a003-0f90b4808d2e" />
+
+```
+import requests
+import re
+from transformers import pipeline
+from collections import Counter
+import numpy as np
+import matplotlib.pyplot as plt
+
+# ===================================
+# 1. User Input: Multiple Topics
+# ===================================
+topics = []
+num_topics = int(input("Enter number of Wikipedia talk pages to compare: "))
+for i in range(num_topics):
+    topic = input(f"Enter topic {i+1} (e.g., United States, Climate change, Elon Musk): ").strip()
+    topics.append(topic)
+
+# ===================================
+# 2. Wikipedia API Setup
+# ===================================
+endpoint = "https://en.wikipedia.org/w/api.php"
+headers = {"User-Agent": "CarolinaBot/1.0 (https://example.com)"}
+
+# ===================================
+# 3. Load Models
+# ===================================
+print("\nLoading models (this may take a bit)...")
+sentiment_model = pipeline("sentiment-analysis", model="tabularisai/multilingual-sentiment-analysis")
+toxicity_model = pipeline("text-classification", model="unitary/toxic-bert")
+
+# ===================================
+# 4. Helper Functions
+# ===================================
+def fetch_talk_page_content(topic):
+    params = {
+        "action": "query",
+        "format": "json",
+        "prop": "revisions",
+        "titles": f"Talk:{topic}",
+        "rvprop": "content",
+        "rvslots": "main"
+    }
+    response = requests.get(endpoint, params=params, headers=headers)
+    data = response.json()
+    page = list(data["query"]["pages"].values())[0]
+    if "revisions" not in page:
+        print(f"⚠️ No content found for Talk:{topic}")
+        return None
+    return page["revisions"][0]["slots"]["main"]["*"]
+
+def extract_comments(content):
+    comment_pattern = re.compile(r"(.*?)(--.*?\d{2}:\d{2},.*?\(UTC\))", re.DOTALL)
+    matches = comment_pattern.findall(content)
+    comments = [m[0].strip() for m in matches if m[0].strip()]
+    return comments
+
+def classify_long_text(pipeline_model, text, max_length=512):
+    words = text.split()
+    results = []
+    for i in range(0, len(words), max_length):
+        chunk = " ".join(words[i:i+max_length])
+        result = pipeline_model(chunk, truncation=True, max_length=max_length)[0]
+        results.append(result)
+    return max(results, key=lambda r: r["score"])
+
+def categorize_score(score):
+    """Convert a score (0-1) to Low/Medium/High."""
+    if score < 0.5:
+        return "Low"
+    elif score < 0.75:
+        return "Medium"
+    else:
+        return "High"
+
+# ===================================
+# 5. Run Analysis per Topic
+# ===================================
+topic_results = {}
+
+for topic in topics:
+    print(f"\n=== Processing Talk:{topic} ===")
+    content = fetch_talk_page_content(topic)
+    if not content:
+        continue
+
+    comments = extract_comments(content)
+    print(f"Extracted {len(comments)} comments.\n")
+
+    sentiment_labels, sentiment_confidences, toxicity_conf_levels = [], [], []
+
+    for comment in comments:
+        sentiment = classify_long_text(sentiment_model, comment)
+        toxicity = classify_long_text(toxicity_model, comment)
+
+        sentiment_labels.append(sentiment["label"])
+        sentiment_confidences.append(categorize_score(sentiment["score"]))
+        toxicity_conf_levels.append(categorize_score(toxicity["score"]))  # now as Low/Medium/High
+
+    # Aggregation
+    topic_results[topic] = {
+        "sentiment_label_dist": Counter(sentiment_labels),
+        "sentiment_conf_dist": Counter(sentiment_confidences),
+        "toxicity_conf_dist": Counter(toxicity_conf_levels)
+    }
+
+# ===================================
+# 6. Comparative Visualization
+# ===================================
+if not topic_results:
+    print("No valid topics to display.")
+    exit()
+
+topics_list = list(topic_results.keys())
+num_topics = len(topics_list)
+width = 0.2
+x = np.arange(num_topics)
+
+fig, axs = plt.subplots(1, 4, figsize=(28, 6))  # 4 charts side by side
+
+# --- 1. Sentiment Labels (Grouped) ---
+labels = ["Positive", "Neutral", "Negative"]
+colors = ["#7FC97F", "#BEAED4", "#FDC086"]
+for i, label in enumerate(labels):
+    counts = [topic_results[t]["sentiment_label_dist"].get(label, 0) for t in topics_list]
+    axs[0].bar(x + (i - 1)*width, counts, width, label=label, color=colors[i])
+axs[0].set_title("Sentiment Labels")
+axs[0].set_xticks(x)
+axs[0].set_xticklabels(topics_list, rotation=15)
+axs[0].set_ylabel("Number of Comments")
+axs[0].legend()
+
+# --- 2. Sentiment Confidence (Grouped) ---
+levels = ["Low", "Medium", "High"]
+colors_levels = ["#D9D9D9", "#A6CEE3", "#1F78B4"]
+for i, level in enumerate(levels):
+    counts = [topic_results[t]["sentiment_conf_dist"].get(level, 0) for t in topics_list]
+    axs[1].bar(x + (i - 1)*width, counts, width, label=level, color=colors_levels[i])
+axs[1].set_title("Sentiment Confidence")
+axs[1].set_xticks(x)
+axs[1].set_xticklabels(topics_list, rotation=15)
+axs[1].legend()
+
+# --- 3. Toxicity Confidence (Grouped) ---
+for i, level in enumerate(levels):
+    counts = [topic_results[t]["toxicity_conf_dist"].get(level, 0) for t in topics_list]
+    axs[2].bar(x + (i - 1)*width, counts, width, label=level, color=colors_levels[i])
+axs[2].set_title("Toxicity Levels (Low/Med/High)")
+axs[2].set_xticks(x)
+axs[2].set_xticklabels(topics_list, rotation=15)
+axs[2].legend()
+
+# --- 4. Sentiment Labels (Stacked Percentage) ---
+bottom = np.zeros(num_topics)
+for i, label in enumerate(labels):
+    counts = np.array([topic_results[t]["sentiment_label_dist"].get(label, 0) for t in topics_list])
+    topic_totals = np.array([sum(topic_results[t]["sentiment_label_dist"].values()) for t in topics_list])
+    perc = np.divide(counts, topic_totals, out=np.zeros_like(counts, dtype=float), where=topic_totals!=0) * 100
+    axs[3].bar(x, perc, bottom=bottom, label=label, color=colors[i])
+    bottom += perc
+axs[3].set_title("Sentiment Labels (Stacked %)")
+axs[3].set_xticks(x)
+axs[3].set_xticklabels(topics_list, rotation=15)
+axs[3].set_ylabel("Percentage (%)")
+axs[3].legend()
+
+plt.tight_layout()
+plt.show()
+```
+
 
 
