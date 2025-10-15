@@ -197,3 +197,6 @@ axs[2].set_ylabel("Number of Comments")
 plt.show()
 
 ```
+
+# Research Question Week 7
+
