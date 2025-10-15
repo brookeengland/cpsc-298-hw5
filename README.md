@@ -199,4 +199,6 @@ plt.show()
 ```
 
 # Research Question Week 7
+Question: How does higher toxicity correlate with stronger negative sentiment in Wikipedia Talk-page discussions?
+
 
